@@ -1,0 +1,30 @@
+body{
+	background-image: url('../img/bg-login.png') !important;
+	background-size: 1900px !important;
+	background-repeat: no-repeat !important;
+}
+.judul{
+	color: white !important;
+	font-size: 60px;
+}
+.login-box-body a{
+	color: white !important;
+}
+.login-box-body a:hover{
+	color: #132f5b !important;
+	font-weight: bold !important;
+}
+.login-box-body{
+	font-size: 15px !important;
+	color: white !important;
+	background-color: rgba(255, 255, 255, 0.3);
+}
+.kredit{
+	color: white !important;
+	font-size: 20px !important;
+}
+.main-footer{
+	border-top: none;
+	border-bottom: 7px solid #605ca8; 
+	width: 100%;
+}
