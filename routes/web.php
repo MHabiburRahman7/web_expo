@@ -11,7 +11,10 @@
 |
 */
 
+Route::get('/anggota','AnggotaController@index');
 Route::get('/berkas', 'BerkasController@index');
+Route::post('/anggota/edit','AnggotaController@store');
+Route::post('/anggota/add','AnggotaController@edit');
 Auth::routes();
 Route::group(['middleware' => 'App\Http\Middleware\RevokeDataMiddleware'], function()
 {

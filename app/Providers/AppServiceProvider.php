@@ -21,12 +21,16 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {
-        view()->composer('*', function($view) {
-            $user = User::where('id', Auth::user()->id)->first();
-            $profile = $user->profile()->first();
-            $kompetisi = $user->kompetisi()->first();
-            $view->with('kompetisi', $kompetisi)->with('profile',$profile);
+    {   
+        
+        view()->composer('*', function($view) { 
+            if (Auth::guard(null)->check()) 
+            { 
+            $user = User::where('id', Auth::user()->id)->first(); 
+            $profile = $user->profile()->first(); 
+            $kompetisi = $user->kompetisi()->first(); 
+            $view->with('kompetisi', $kompetisi)->with('profile',$profile); 
+            } 
         });
 
         Validator::extend('kategori', function ($attribute, $value, $parameters, $validator) {

@@ -1,6 +1,14 @@
 @extends('layouts.itsexpo')
 
 @section('content')
+<?php 
+  $agt = $anggota[0]->maks;
+  $kta = $ketua[0]->maks;
+  $id_a = $anggota[0]->id;
+  $id_k = $ketua[0]->id;
+  $total = $kta + $agt;
+  //dd($anggota,$ketua);
+?>
   <div style="background-color: #ededed;" id="inti">
 
     <section class="content">
@@ -39,81 +47,142 @@
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
               <li><a href="{{url('/')}}" >Timeline Kompetisi</a></li>
-              <li><a href="{{url('/anggota')}}" >Edit Anggota</a></li>
-              <li class="active"><a href="{{url('/berkas')}}">Upload Berkas</a></li>
+              <li class="active"><a href="{{url('/anggota')}}" >Edit Anggota</a></li>
+              <li><a href="{{url('/berkas')}}">Upload Berkas</a></li>
             </ul>
+            @if(count($semua) > 0)
             <div class="tab-content">
-              <div class="active tab-pane" id="timeline">
-                <form class="form-horizontal" method="POST" action="{{url('/berkas')}}" enctype="multipart/form-data">
+              <div class="active tab-pane" id="timeline"> 
+                <form class="form-horizontal" method="POST" action="{{url('/anggota/add')}}" enctype="multipart/form-data">
+                  {{ csrf_field() }}
+                  <?php $i = 1; ?>
+                  @foreach($semua as $tmp)
+                  <h3>Anggota {{$i}}</h3>
+                  Nama: <br>
                   <div class="form-group">
-                    <label for="inputName" class="col-sm-2 control-label">Tipe Berkas</label>
-
-                    <div class="col-sm-10">
-                      <select name="type" id="inputEmail" class="form-control">
-                        <option disabled="" selected>--pilih Tipe--</option>
-                        @foreach($tipe as $typ)
-                        @if($typ->hidden != 1)
-                        <option value="{{$typ->id}}" >{{$typ->nama}}</option>
-                        @endif
-                        @endforeach
-                      </select>
-                      @if ($errors->has('kompetisi'))
-                      <div class="alert alert-danger">
-                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> {{ $errors->first('kompetisi') }}</div>
-                      @endif
-                    </div>
+                    <input type="text" name="nama[]" value="{{$tmp->nama}}" required>
                   </div>
+                  Telpon: <br>
                   <div class="form-group">
-                    <label for="inputEmail" class="col-sm-2 control-label">Berkas</label>
-
-                    <div class="col-sm-10">
-                      <input type="file" name="berkas" class="form-control" id="inputEmail" placeholder="Upload Berkas">
-                    </div>
+                    <input type="text" name="telp[]" value="{{$tmp->telp}}" required>
                   </div>
+                  ID Line: <br>
                   <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                      <button type="submit" class="btn btn-danger">Upload</button>
-                    </div>
+                    <input type="text" name="id_line[]" value="{{$tmp->id_line}}" required>
                   </div>
-                </form>
-               <table id="berkas" class="table table-bordered table-dataTable">
-                 <thead>
-                   <tr>
-                     <th>User/Tim</th>
-                     <th>Kompetisi</th>
-                     <th>Tipe berkas</th>
-                     <th>Nama berkas</th>
-                     <th>Waktu upload</th>
-                   </tr>
-                 </thead>
-                 <tfoot>
-                   <tr>
-                     <th>User/Tim</th>
-                     <th>Kompetisi</th>
-                     <th>Tipe berkas</th>
-                     <th>Nama berkas</th>
-                     <th>Waktu upload</th>
-                   </tr>
-                 </tfoot>>
-                 <tbody>
-                 @foreach($berkas as $bks)
-                   <tr>
-                   @if($bks->user()->first()->profile()->first()->nama_tim != '')
-                     <td>{{$bks->user()->first()->profile()->first()->nama_tim}}</td>
-                   @else
-                     <td>{{$bks->user()->first()->anggota()->first()->nama}}</td>
-                   @endif
-                     <td>{{$bks->berkasType()->first()->nama}}</td>
-                     <td>{{$bks->nama}}</td>
-                     <td>{{$bks->created_at}]</td>
-                   </tr>
+                  Alamat: <br>
+                  <div class="form-group">
+                    <input type="textarea" name="alamat[]" value="{{$tmp->alamat}}" required>
+                  </div>
+                  Jenis Kelamin: <br>
+                  @if($tmp->jenis_kelamin == 'L')
+                  <div class="form-group">
+                    <select name="jk[]" required>
+                      <option value="L" selected>Laki-Laki</option>
+                      <option value="P">Perempuan</option>
+                    </select>
+                  </div>
+                  @else
+                  <div class="form-group">
+                    <select name="jk[]" required>
+                      <option value="L">Laki-Laki</option>
+                      <option value="P" selected>Perempuan</option>
+                    </select>
+                  </div>
+                  @endif
+                  Tanggal Lahir: <br>
+                  <div class="form-group">
+                    <input type="date" name="tgl_lahir[]" value="{{$tmp->tanggal_lahir}}" required>
+                  </div>
+                  Tempat Lahir: <br>
+                  <div class="form-group">
+                    <input type="text" name="tmpt_lahir[]" value="{{$tmp->tempat_lahir}}" required>
+                  </div>
+                  No Identitas: <br>
+                  <div class="form-group">
+                    <input type="text" name="nomor_identitas[]" value="{{$tmp->nomor_identitas}}" required>
+                  </div>
+                  Peranan: <br>
+                  @if($tmp->role_id == $id_k)
+                  <select name="role_id[]" required>
+                    <option value="{{$id_k}}" selected>Ketua</option>
+                    <option value="{{$id_a}}">Anggota</option>                    
+                  </select>
+                  @else
+                  <select name="role_id[]" required>
+                    <option value="{{$id_k}}">Ketua</option>
+                    <option value="{{$id_a}}" selected>Anggota</option>                    
+                  </select>
+                  @endif
+                  <br><br>Email: <br>
+                  <div class="form-group">
+                    <input type="email" name="email[]" value="{{$tmp->email}}" required>
+                  </div>
+                  <?php $i++;?>
                   @endforeach
-                 </tbody>
-               </table>
-
+                  <input type="submit">
+                </form>
               </div>
               <br>
             </div>
+            @else
+            <div class="tab-content">
+              <div class="active tab-pane" id="timeline"> 
+                <form class="form-horizontal" method="POST" action="{{url('/anggota/edit')}}" enctype="multipart/form-data">
+                  {{ csrf_field() }}
+                  @for($i = 1; $i <= $total; $i++)
+                  <h3>Anggota {{$i}}</h3>
+                  Nama: <br>
+                  <div class="form-group">
+                    <input type="text" name="nama[]"  required>
+                  </div>
+                  Telpon: <br>
+                  <div class="form-group">
+                    <input type="text" name="telp[]" required>
+                  </div>
+                  ID Line: <br>
+                  <div class="form-group">
+                    <input type="text" name="id_line[]" required>
+                  </div>
+                  Alamat: <br>
+                  <div class="form-group">
+                    <input type="textarea" name="alamat[]" required>
+                  </div>
+                  Jenis Kelamin: <br>
+                  <div class="form-group">
+                    <select name="jk[]" required>
+                      <option value="L">Laki-Laki</option>
+                      <option value="P">Perempuan</option>
+                    </select>
+                  </div>
+                  Tanggal Lahir: <br>
+                  <div class="form-group">
+                    <input type="date" name="tgl_lahir[]" required>
+                  </div>
+                  Tempat Lahir: <br>
+                  <div class="form-group">
+                    <input type="text" name="tmpt_lahir[]" required>
+                  </div>
+                  No Identitas: <br>
+                  <div class="form-group">
+                    <input type="text" name="nomor_identitas[]" required>
+                  </div>
+                  Peranan: <br>
+                  <select name="role_id[]" required>
+                    <option value="{{$id_k}}">Ketua</option>
+                    <option value="{{$id_a}}">Anggota</option>                    
+                  </select>
+                  <br><br>Email: <br>
+                  <div class="form-group">
+                    <input type="email" name="email[]" required>
+                  </div>
+                  @endfor
+                  <input type="submit">
+                </form>
+              </div>
+              <br>
+            </div>
+            @endif
           </div>
         </div>
       </div>
